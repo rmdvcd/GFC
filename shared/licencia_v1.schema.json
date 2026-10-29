@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rmdvcd.github.io/GFC/schemas/licencia_v1.schema.json",
+  "title": "Licencia offline FichaCosto v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "payload", "signature"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "payload": {"$ref": "#/$defs/payload"},
+    "signature": {"type": "string", "contentEncoding": "base64", "minLength": 80, "maxLength": 100}
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["licenseId", "producto", "tipo", "titular", "deviceFingerprint", "fechaEmision", "fechaExpiracion", "features", "maxFichas"],
+      "properties": {
+        "licenseId": {"type": "string", "format": "uuid"},
+        "producto": {"const": "FichaCosto"},
+        "tipo": {"type": "string", "enum": ["TRIAL", "STANDARD", "PRO", "ENTERPRISE"]},
+        "titular": {"type": "object", "additionalProperties": false, "required": ["nombre", "nit", "email"], "properties": {"nombre": {"type": "string", "minLength": 1, "maxLength": 200}, "nit": {"type": "string", "minLength": 1, "maxLength": 40}, "email": {"type": "string", "format": "email", "maxLength": 254}}},
+        "deviceFingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "fechaEmision": {"type": "string", "format": "date-time"},
+        "fechaExpiracion": {"anyOf": [{"type": "string", "format": "date-time"}, {"type": "null"}]},
+        "features": {"type": "array", "uniqueItems": true, "items": {"type": "string", "enum": ["fichas", "pdf", "multimoneda", "import_export"]}},
+        "maxFichas": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "notas": {"type": "string", "maxLength": 2000}
+      }
+    }
+  }
+}

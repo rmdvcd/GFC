@@ -1,0 +1,45 @@
+name: ficha_costo_mobile
+description: FichaCosto Mobile - MVP offline para confección de fichas de costos.
+publish_to: none
+version: 0.1.0+1
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.6.1
+  drift: ^2.22.1
+  sqlite3: ^2.4.6
+  sqlcipher_flutter_libs: ^0.6.5
+  path_provider: ^2.1.5
+  path: ^1.9.0
+  flutter_secure_storage: ^9.2.2
+  uuid: ^4.5.1
+  archive: ^4.0.2
+  json_schema: ^5.2.2
+  pdf: ^3.11.1
+  printing: ^5.13.4
+  csv: ^6.0.0
+  excel: ^4.0.6
+  file_picker: ^8.1.4
+  share_plus: ^10.1.2
+  cryptography: ^2.7.0
+  crypto: ^3.0.6
+  device_info_plus: ^11.2.0
+  unorm_dart: ^0.3.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  drift_dev: ^2.22.1
+  build_runner: ^2.4.13
+  flutter_lints: ^5.0.0
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/ficha_costo_v1.schema.json
+    - assets/licencia_v1.schema.json
+    - assets/ficha148_backup_v1.schema.json
+    - assets/ficha148_backup_payload_v1.schema.json
+    - assets/help_content_v1.json
+    - assets/help_content_v1.schema.json
+    - assets/help/

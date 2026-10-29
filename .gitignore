@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+
+# Flutter / Dart
+.gradle/
+local.properties
+.dart_tool/
+.packages
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+mobile/lib/data/app_database.g.dart
+
+# Local encrypted databases and exports
+*.db
+*.db-shm
+*.db-wal
+*.ficha148
+*.ficha148.bak
+*.bak
+*.lic
+*.pem
+public_key.b64
+license_signing_key*
+revocaciones*.json
+revocations*.json
+!shared/examples/ejemplo.ficha148

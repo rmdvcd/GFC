@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rmdvcd.github.io/GFC/schemas/ficha148_backup_payload_v1.schema.json",
+  "title": "Payload cifrado de respaldo FichaCosto v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "exportadoEn", "fichas", "insumos", "tarifasSalarios", "licenciaActual", "preferencias", "usage"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "exportadoEn": {"type": "string", "format": "date-time"},
+    "fichas": {"type": "array", "items": {"type": "object"}},
+    "insumos": {"type": "array", "items": {"$ref": "#/$defs/insumo"}},
+    "tarifasSalarios": {"type": "array", "items": {"$ref": "#/$defs/tarifa"}},
+    "licenciaActual": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["schemaVersion", "payload", "signature"], "properties": {"schemaVersion": {"const": "1.0.0"}, "payload": {"type": "object"}, "signature": {"type": "string"}}, "additionalProperties": false}]},
+    "preferencias": {"type": "object"},
+    "usage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["features", "fichasCreadasTotal", "ultimoTimestamp", "lastSeenTimestamp"],
+      "properties": {
+        "features": {"type": "array", "items": {"$ref": "#/$defs/uso"}},
+        "fichasCreadasTotal": {"type": "integer", "minimum": 0},
+        "ultimoTimestamp": {"anyOf": [{"type": "string", "format": "date-time"}, {"type": "null"}]},
+        "lastSeenTimestamp": {"anyOf": [{"type": "string", "format": "date-time"}, {"type": "null"}]}
+      }
+    },
+    "notas": {"type": "string", "maxLength": 2000}
+  },
+  "$defs": {
+    "importe": {"type": "object", "additionalProperties": false, "required": ["valor", "moneda"], "properties": {"valor": {"type": "number", "minimum": 0}, "moneda": {"type": "string", "enum": ["CUP", "MLC"]}}},
+    "insumo": {"type": "object", "additionalProperties": false, "required": ["id", "nombre", "unidadMedida", "costoUnitario"], "properties": {"id": {"type": "string", "format": "uuid"}, "nombre": {"type": "string"}, "unidadMedida": {"type": "string"}, "costoUnitario": {"$ref": "#/$defs/importe"}}},
+    "tarifa": {"type": "object", "additionalProperties": false, "required": ["id", "cargo", "unidadTarifa", "tarifa"], "properties": {"id": {"type": "string", "format": "uuid"}, "cargo": {"type": "string"}, "unidadTarifa": {"type": "string"}, "tarifa": {"$ref": "#/$defs/importe"}}},
+    "uso": {"type": "object", "additionalProperties": false, "required": ["licenseId", "feature", "usedCount"], "properties": {"licenseId": {"type": "string", "format": "uuid"}, "feature": {"type": "string", "minLength": 1, "maxLength": 80}, "usedCount": {"type": "integer", "minimum": 0}}}
+  }
+}
