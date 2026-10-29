@@ -1,0 +1,1 @@
+"""FichaCosto Desktop package."""

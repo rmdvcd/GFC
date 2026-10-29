@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rmdvcd.github.io/GFC/schemas/ficha148_backup_v1.schema.json",
+  "title": "Manifiesto de respaldo cifrado FichaCosto v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "formato", "fechaCreacion", "appOrigen", "appVersion", "deviceFingerprintOrigen", "kdf", "cifrado", "contenido"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "formato": {"const": "ficha148_backup"},
+    "fechaCreacion": {"type": "string", "format": "date-time"},
+    "appOrigen": {"type": "string", "enum": ["mobile", "desktop"]},
+    "appVersion": {"type": "string", "minLength": 1, "maxLength": 40},
+    "deviceFingerprintOrigen": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "kdf": {
+      "type": "object", "additionalProperties": false,
+      "required": ["algoritmo", "salt", "memory", "iterations", "parallelism"],
+      "properties": {
+        "algoritmo": {"const": "argon2id"},
+        "salt": {"type": "string", "pattern": "^[A-Za-z0-9+/]{22}==$"},
+        "memory": {"type": "integer", "enum": [32768, 65536], "description": "KiB"},
+        "iterations": {"const": 3},
+        "parallelism": {"const": 4}
+      }
+    },
+    "cifrado": {
+      "type": "object", "additionalProperties": false,
+      "required": ["algoritmo", "nonce"],
+      "properties": {
+        "algoritmo": {"const": "AES-256-GCM"},
+        "nonce": {"type": "string", "pattern": "^[A-Za-z0-9+/]{16}$"}
+      }
+    },
+    "contenido": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fichas", "insumos", "salarios", "incluyeLicencia", "incluyePreferencias"],
+      "properties": {
+        "fichas": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "insumos": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "salarios": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "incluyeLicencia": {"type": "boolean"},
+        "incluyePreferencias": {"type": "boolean"}
+      }
+    }
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rmdvcd.github.io/GFC/schemas/ficha_costo_v1.schema.json",
+  "title": "Ficha de Costos y Gastos - contrato interoperable v1",
+  "description": "Contrato de intercambio para FichaCosto. Las reglas de cálculo o campos regulatorios no confirmados no se presuponen; extensiones no cubiertas pueden guardarse en extensionData.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "ficha"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "ficha": {"$ref": "#/$defs/ficha"}
+  },
+  "$defs": {
+    "moneda": {"type": "string", "enum": ["CUP", "MLC"]},
+    "estado": {"type": "string", "enum": ["borrador", "finalizada"]},
+    "categoria": {
+      "type": "string",
+      "enum": ["materias_primas_materiales", "fuerza_trabajo_directa", "otros_gastos_directos", "gastos_indirectos_produccion"]
+    },
+    "importe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valor", "moneda"],
+      "properties": {
+        "valor": {"type": "number", "minimum": 0},
+        "moneda": {"$ref": "#/$defs/moneda"}
+      }
+    },
+    "partida": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "categoria", "descripcion", "cantidad", "unidadMedida", "costoUnitario", "subtotal"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "categoria": {"$ref": "#/$defs/categoria"},
+        "descripcion": {"type": "string", "minLength": 1},
+        "insumoId": {"type": ["string", "null"], "format": "uuid"},
+        "cantidad": {"type": "number", "minimum": 0},
+        "unidadMedida": {"type": "string", "minLength": 1},
+        "costoUnitario": {"$ref": "#/$defs/importe"},
+        "subtotal": {"$ref": "#/$defs/importe"},
+        "observaciones": {"type": "string"}
+      }
+    },
+    "insumo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre", "unidadMedida", "costoUnitario"],
+      "properties": {"id": {"type": "string", "format": "uuid"}, "nombre": {"type": "string", "minLength": 1}, "unidadMedida": {"type": "string", "minLength": 1}, "costoUnitario": {"$ref": "#/$defs/importe"}}
+    },
+    "tarifaSalario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "cargo", "tarifa", "unidadTarifa"],
+      "properties": {"id": {"type": "string", "format": "uuid"}, "cargo": {"type": "string", "minLength": 1}, "tarifa": {"$ref": "#/$defs/importe"}, "unidadTarifa": {"type": "string", "minLength": 1}}
+    },
+    "catalogosSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["insumos", "tarifasSalario"],
+      "properties": {"insumos": {"type": "array", "items": {"$ref": "#/$defs/insumo"}}, "tarifasSalario": {"type": "array", "items": {"$ref": "#/$defs/tarifaSalario"}}}
+    },
+    "totalesMoneda": {
+      "type": "object",
+      "description": "Totales separados por moneda; nunca se convierten ni se suman monedas distintas.",
+      "additionalProperties": false,
+      "required": ["CUP", "MLC"],
+      "properties": {"CUP": {"type": "number", "minimum": 0}, "MLC": {"type": "number", "minimum": 0}}
+    },
+    "ficha": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nombre", "fechaCreacion", "fechaActualizacion", "estado", "monedaBase", "partidas", "coeficientes", "totales"],
+      "properties": {
+        "id": {"type": "string", "format": "uuid"},
+        "nombre": {"type": "string", "minLength": 1},
+        "descripcion": {"type": "string"},
+        "fechaCreacion": {"type": "string", "format": "date-time"},
+        "fechaActualizacion": {"type": "string", "format": "date-time"},
+        "estado": {"$ref": "#/$defs/estado"},
+        "monedaBase": {"$ref": "#/$defs/moneda"},
+        "partidas": {"type": "array", "items": {"$ref": "#/$defs/partida"}},
+        "catalogosSnapshot": {"$ref": "#/$defs/catalogosSnapshot"},
+        "coeficientes": {
+          "type": "object",
+          "description": "Parámetros opcionales, introducidos por el usuario. No implican una fórmula normativa predeterminada.",
+          "additionalProperties": false,
+          "properties": {
+            "coeficienteIndirecto": {"type": ["number", "null"], "minimum": 0},
+            "margenGanancia": {"type": ["number", "null"], "minimum": 0},
+            "unidadCoeficiente": {"type": "string", "enum": ["porcentaje", "factor"]}
+          }
+        },
+        "totales": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["porCategoria", "costoTotal"],
+          "properties": {
+            "porCategoria": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["materias_primas_materiales", "fuerza_trabajo_directa", "otros_gastos_directos", "gastos_indirectos_produccion"],
+              "properties": {
+                "materias_primas_materiales": {"$ref": "#/$defs/totalesMoneda"},
+                "fuerza_trabajo_directa": {"$ref": "#/$defs/totalesMoneda"},
+                "otros_gastos_directos": {"$ref": "#/$defs/totalesMoneda"},
+                "gastos_indirectos_produccion": {"$ref": "#/$defs/totalesMoneda"}
+              }
+            },
+            "costoTotal": {"$ref": "#/$defs/totalesMoneda"},
+            "precioCalculado": {"anyOf": [{"$ref": "#/$defs/totalesMoneda"}, {"type": "null"}]}
+          }
+        },
+        "extensionData": {
+          "type": "object",
+          "description": "Datos adicionales acordados en futuras versiones o requeridos por cada organización.",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}
