@@ -71,6 +71,10 @@ flutter run
 
 Drift genera `lib/data/app_database.g.dart` mediante `build_runner`; no se versiona código generado. Se incluye el scaffold Android nativo. El esquema compartido se copia como asset en `mobile/assets/`; al cambiarlo, ejecutar `../scripts/sync_mobile_schema.sh`.
 
+### Exportación XLSX y dependencia `archive`
+
+El libro `.xlsx` se genera en `mobile/lib/data/xlsx_writer.dart`: una hoja (`Partidas`), textos como cadena en línea (`inlineStr`) y valores numéricos como números, empaquetados con `archive`. No se usa `package:excel` porque su última versión (4.0.6) exige `archive ^3.6.1`, incompatible con el `archive ^4.x` que necesita la lectura por bloques, con límites de tamaño, de los paquetes `.ficha148` y de los respaldos. Por eso `flutter pub upgrade --major-versions` fallaba con «version solving failed». La prueba del generador está en `mobile/test/xlsx_writer_test.dart`.
+
 ## Módulo PDF referencial
 
 El generador Flutter está en `mobile/lib/data/ficha_costo_pdf.dart` (`FichaCostoPdf`); `printing` permite previsualizar/imprimir y `ExportacionesDocumento.pdf` guarda los bytes localmente. En la pantalla de edición se ofrecen ambas acciones. El generador Python `generar_pdf_ficha(ficha: FichaCosto) -> bytes` está expuesto en `desktop/src/fichacosto/exportaciones.py`; `exportar_pdf(ficha, destino)` lo usa desde la presentación de escritorio.
