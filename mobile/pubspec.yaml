@@ -20,7 +20,6 @@ dependencies:
   pdf: ^3.11.1
   printing: ^5.13.4
   csv: ^6.0.0
-  excel: ^4.0.6
   file_picker: ^8.1.4
   share_plus: ^10.1.2
   cryptography: ^2.7.0
